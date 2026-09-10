@@ -85,11 +85,25 @@ Projeto Remotion 4 completo para geração automatizada dos 4 vídeos institucio
 
 ---
 
+### 5. `VideoAdmissao` — 45s / 1350 frames
+- **Áudio**: `audio/admissao.mp3`
+- **Cena 1 — Splash (0-120f / 0s-4s)**: Ícone com 3 barras verticais em spring, badge "CONSÓRCIO LOTE 15", marca "MetricLab", subtítulo colorido e descrição institucional.
+- **Cena 2 — Home do App (120-270f / 4s-9s)**: iPhone entra por baixo; tela "Colaboradores" com empty state; drawer lateral abre e fecha com animação física do hamburger; clique no botão "Novo Colaborador" e no FAB.
+- **Cena 3 — Formulário (270-510f / 9s-17s)**: Transição lateral; 4 campos underline com efeito de digitação animada (Nome, WhatsApp, Gestor, Cargo); ativação do botão "Iniciar Processo" e overlay animado do WhatsApp.
+- **Cena 4 — WhatsApp Candidato (510-1140f / 17s-38s)**: Interface completa do WhatsApp; conversa guiada com o assistente Jota (14 mensagens com balões personalizados, status, timestamps, typing indicator animado e auto-scroll dinâmico).
+- **Cena 5 — Celular do Gestor (1140-1320f / 38s-44s)**: WhatsApp do Eng. Roberto Lima com notificação push e Summary Card estruturado com status dos documentos e próximas etapas.
+- **Cena 6 — Encerramento (1320-1350f / 44s-45s)**: Logo M. com ponto âmbar, subtítulo "Fluxo de Contratação", hairline e assinatura "Powered by MetricLab".
+
+---
+
 ## 🛠️ Comandos de Build e Resultados
 
-- `npm run build:all`: Renderiza todos os 4 vídeos com áudio sincronizado
+- `npm run build:admissao`: Renderiza a nova composição `VideoAdmissao` (45s, 1350 frames, 1080x1920)
+  - `out/admissao.mp4` (5.7 MB)
+- `npm run build:all`: Renderiza todos os 4 vídeos anteriores com áudio sincronizado
   - `out/v1-admissao.mp4` & `out/v1-contratacao.mp4` (31s com áudio)
   - `out/v2-vistoria.mp4` (43s com áudio)
   - `out/v3-rdo.mp4` (39s com áudio)
   - `out/v4-supervisor.mp4` (36s com áudio)
-- `npx tsc --noEmit`: Validação sem nenhum erro de tipagem
+- `npx tsc --noEmit`: Validação TypeScript com zero erros
+

@@ -4,10 +4,19 @@ import { Video1Contratacao } from './videos/Video1Contratacao';
 import { Video2Vistoria } from './videos/Video2Vistoria';
 import { Video3RDO } from './videos/Video3RDO';
 import { Video4Supervisor } from './videos/Video4Supervisor';
+import { VideoAdmissao } from './videos/VideoAdmissao';
 import './style.css';
 
 export const RemotionRoot: React.FC = () => (
   <>
+    <Composition
+      id="VideoAdmissao"
+      component={VideoAdmissao}
+      durationInFrames={1350}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     <Composition
       id="Video1Contratacao"
       component={Video1Contratacao}
