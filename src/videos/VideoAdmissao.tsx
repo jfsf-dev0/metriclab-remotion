@@ -12,6 +12,12 @@ import {
 import { IPhoneMockup } from '../components/IPhoneMockup';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// REGRA: SEM LEGENDAS / SUBTITLES / OVERLAYS DE TEXTO
+// O áudio fala por si. Apenas UI interna do iPhone,
+// Splash (cena 1) e Encerramento (cena 6).
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // TOKENS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const T = {
