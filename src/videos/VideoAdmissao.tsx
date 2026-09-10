@@ -12,7 +12,7 @@ import {
 import { IPhoneMockup } from '../components/IPhoneMockup';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// DESIGN SYSTEM — TOKENS
+// TOKENS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const T = {
   canvas: '#F0F0F0',
@@ -28,20 +28,20 @@ const T = {
   waBg: '#ECECEC',
 };
 
-const s = (sec: number) => sec * 30;
+const s = (sec: number) => Math.round(sec * 30);
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 1 — SPLASH (frames 0 → 120 / 0s → 4s)
+// CENA 1 — SPLASH (0 → s(2.4) = 0 → 72)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const SplashScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // ELEMENTO 1 — Ícone: frame 0→15
+  // frame 0→15: Ícone 96×96px, spring(mass:0.6, damping:14) scale 0.6→1.0, opacity 0→1
   const iconSpring = spring({
     frame,
     fps,
-    config: { damping: 14, mass: 0.6 },
+    config: { mass: 0.6, damping: 14 },
   });
   const iconScale = interpolate(iconSpring, [0, 1], [0.6, 1.0]);
   const iconOpacity = interpolate(frame, [0, 15], [0, 1], {
@@ -49,36 +49,36 @@ const SplashScene: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
-  // ELEMENTO 2 — Badge: frame 15→30
-  const badgeOpacity = interpolate(frame, [15, 30], [0, 1], {
+  // frame 10→25: Badge "CONSÓRCIO LOTE 15", opacity 0→1 ease
+  const badgeOpacity = interpolate(frame, [10, 25], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // ELEMENTO 3 — Marca: frame 20→50
-  const marcaOpacity = interpolate(frame, [20, 50], [0, 1], {
+  // frame 18→48: "MetricLab", opacity 0→1 + translateY 14→0 ease
+  const marcaOpacity = interpolate(frame, [18, 48], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const marcaTranslateY = interpolate(frame, [20, 50], [16, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // ELEMENTO 4 — Subtítulo: frame 35→65
-  const subOpacity = interpolate(frame, [35, 65], [0, 1], {
+  const marcaY = interpolate(frame, [18, 48], [14, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // ELEMENTO 5 — Descrição: frame 50→80
-  const descOpacity = interpolate(frame, [50, 80], [0, 1], {
+  // frame 30→55: "Fluxo de Contratação", opacity 0→1 ease
+  const subOpacity = interpolate(frame, [30, 55], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // Fade out geral para transição para Cena 2: frame 110→120
-  const exitOpacity = interpolate(frame, [110, 120], [1, 0], {
+  // frame 42→65: "Sistema Integrado de Engenharia e Gestão", opacity 0→1 ease
+  const descOpacity = interpolate(frame, [42, 65], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // Transição de saída suave nos últimos frames
+  const exitOpacity = interpolate(frame, [65, 72], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -91,21 +91,21 @@ const SplashScene: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
         fontFamily:
           'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
       <div
         style={{
-          position: 'absolute',
-          top: '640px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
+          marginTop: '-60px',
         }}
       >
-        {/* ELEMENTO 1 — Ícone */}
+        {/* Ícone 96x96 */}
         <div
           style={{
             width: '96px',
@@ -142,16 +142,16 @@ const SplashScene: React.FC = () => {
           </svg>
         </div>
 
-        {/* ELEMENTO 2 — Badge */}
+        {/* Badge "CONSÓRCIO LOTE 15" */}
         <div
           style={{
             marginTop: '20px',
             opacity: badgeOpacity,
             border: `1px solid ${T.hairline}`,
-            backgroundColor: '#FFFFFF',
-            padding: '8px 20px',
+            backgroundColor: T.surface,
+            padding: '6px 16px',
             borderRadius: '99px',
-            fontSize: '14px',
+            fontSize: '13px',
             fontWeight: 600,
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
@@ -162,12 +162,12 @@ const SplashScene: React.FC = () => {
           CONSÓRCIO LOTE 15
         </div>
 
-        {/* ELEMENTO 3 — Marca */}
+        {/* "MetricLab" */}
         <div
           style={{
             marginTop: '16px',
             opacity: marcaOpacity,
-            transform: `translateY(${marcaTranslateY}px)`,
+            transform: `translateY(${marcaY}px)`,
             fontSize: '72px',
             fontWeight: 900,
             letterSpacing: '-2.5px',
@@ -178,7 +178,7 @@ const SplashScene: React.FC = () => {
           MetricLab
         </div>
 
-        {/* ELEMENTO 4 — Subtítulo */}
+        {/* "Fluxo de Contratação" */}
         <div
           style={{
             marginTop: '8px',
@@ -192,12 +192,12 @@ const SplashScene: React.FC = () => {
           Fluxo de Contratação
         </div>
 
-        {/* ELEMENTO 5 — Descrição */}
+        {/* "Sistema Integrado de Engenharia e Gestão" */}
         <div
           style={{
             marginTop: '8px',
             opacity: descOpacity,
-            fontSize: '18px',
+            fontSize: '17px',
             fontWeight: 400,
             color: T.graphite,
           }}
@@ -210,90 +210,75 @@ const SplashScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 2 — HOME DO APP (frames 120 → 270 / 4s → 9s)
+// CENA 2 — HOME DO APP (s(2.4) → s(9) = 72 → 270 / 198 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const HomeScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Transição de Entrada: local frame 0→30 (global 120→150)
+  // frame 0→30: iPhone entra por baixo, spring translateY 1100→0
   const enterSpring = spring({
     frame,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
-  const translateY = interpolate(enterSpring, [0, 1], [1200, 0]);
+  const translateY = interpolate(enterSpring, [0, 1], [1100, 0]);
 
-  // Transição de Saída: local frame 145→150 (global 265→270)
-  const exitX = interpolate(frame, [145, 150], [0, -400], {
+  // Transição de saída nos últimos frames da cena (frames 185→198)
+  const exitX = interpolate(frame, [185, 198], [0, -400], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // FAB Animação: local frame 30→55 (global 150→175)
+  // FAB frame 35→55: spring scale 0→1
   const fabSpring = spring({
-    frame: frame - 30,
+    frame: frame - 35,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
-  const fabScaleBase = interpolate(fabSpring, [0, 1], [0, 1]);
-  const fabOpacity = interpolate(frame, [30, 45], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  const fabScale = interpolate(fabSpring, [0, 1], [0, 1]);
 
-  // FAB Click: local frame 140→148 (global 260)
-  const fabClickScale = interpolate(frame, [140, 144, 148], [1, 0.85, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-  const fabFinalScale = fabScaleBase * fabClickScale;
-
-  // Hamburger Animação (local frame 60→75 abre, 100→120 fecha)
-  const isOpening = frame >= 60 && frame < 100;
-  const isClosing = frame >= 100 && frame <= 120;
-  let openProgress = 0;
-  if (frame < 60) {
-    openProgress = 0;
-  } else if (isOpening) {
-    openProgress = interpolate(frame, [60, 75], [0, 1], {
+  // HAMBURGER ABRE frame 90 (relativo): 15 frames (90→105)
+  // DRAWER frame 90→120: translateX -220→0
+  // DRAWER FECHA frame 145→165: translateX 0→-220
+  // HAMBURGER VOLTA frame 145→160
+  let hamburgerProgress = 0;
+  if (frame >= 90 && frame < 145) {
+    hamburgerProgress = interpolate(frame, [90, 105], [0, 1], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     });
-  } else if (isClosing) {
-    openProgress = interpolate(frame, [100, 120], [1, 0], {
+  } else if (frame >= 145) {
+    hamburgerProgress = interpolate(frame, [145, 160], [1, 0], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     });
-  } else {
-    openProgress = 0;
   }
 
-  const line1Rotate = openProgress * 45;
-  const line1Y = openProgress * 6;
-  const line2Opacity = 1 - openProgress;
-  const line3Rotate = openProgress * -45;
-  const line3Y = openProgress * -6;
+  const line1Y = hamburgerProgress * 6;
+  const line1Rotate = hamburgerProgress * 45;
+  const line2Opacity = 1 - hamburgerProgress;
+  const line3Y = hamburgerProgress * -6;
+  const line3Rotate = hamburgerProgress * -45;
 
-  // Drawer Animação
   const drawerSpring = spring({
-    frame: frame - 60,
+    frame: frame - 90,
     fps,
     config: { damping: 16, mass: 0.5 },
   });
-  let drawerX = -280;
-  if (frame >= 60 && frame < 100) {
-    drawerX = interpolate(drawerSpring, [0, 1], [-280, 0]);
-  } else if (frame >= 100) {
-    const closeP = interpolate(frame, [100, 120], [0, 1], {
+
+  let drawerX = -220;
+  if (frame >= 90 && frame < 145) {
+    drawerX = interpolate(drawerSpring, [0, 1], [-220, 0]);
+  } else if (frame >= 145) {
+    drawerX = interpolate(frame, [145, 165], [0, -220], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     });
-    drawerX = interpolate(closeP, [0, 1], [0, -280]);
   }
 
-  // Clique em "Novo Colaborador": local frame 130→140 (global 250)
-  const btnScale = interpolate(frame, [130, 135, 140], [1, 0.95, 1], {
+  // CLIQUE "NOVO COLABORADOR" frame 175: btn scale 1.0→0.95 (5f) → 1.0 (5f)
+  const btnScale = interpolate(frame, [175, 180, 185], [1.0, 0.95, 1.0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -326,7 +311,7 @@ const HomeScene: React.FC = () => {
                 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
           >
-            {/* STATUS BAR (40px) */}
+            {/* STATUS BAR 40px */}
             <div
               style={{
                 height: '40px',
@@ -342,7 +327,7 @@ const HomeScene: React.FC = () => {
             >
               <span
                 style={{
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: 600,
                   color: T.ink,
                 }}
@@ -360,7 +345,7 @@ const HomeScene: React.FC = () => {
               </span>
             </div>
 
-            {/* NAVBAR (46px) */}
+            {/* NAVBAR 46px */}
             <div
               style={{
                 height: '46px',
@@ -374,7 +359,7 @@ const HomeScene: React.FC = () => {
                 zIndex: 20,
               }}
             >
-              {/* Hamburger Button */}
+              {/* Hambúrguer */}
               <div
                 style={{
                   width: '24px',
@@ -383,7 +368,6 @@ const HomeScene: React.FC = () => {
                   flexDirection: 'column',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  position: 'relative',
                 }}
               >
                 <div
@@ -394,7 +378,6 @@ const HomeScene: React.FC = () => {
                     borderRadius: '1px',
                     transform: `translateY(${line1Y}px) rotate(${line1Rotate}deg)`,
                     transformOrigin: 'center',
-                    transition: 'transform 0.1s',
                   }}
                 />
                 <div
@@ -420,8 +403,7 @@ const HomeScene: React.FC = () => {
                 />
               </div>
 
-              {/* Title */}
-              <div
+              <span
                 style={{
                   fontSize: '13px',
                   fontWeight: 500,
@@ -429,12 +411,12 @@ const HomeScene: React.FC = () => {
                 }}
               >
                 Colaboradores
-              </div>
+              </span>
 
               <div style={{ width: '24px' }} />
             </div>
 
-            {/* CONTEÚDO */}
+            {/* HOME CONTENT */}
             <div
               style={{
                 flex: 1,
@@ -444,7 +426,6 @@ const HomeScene: React.FC = () => {
                 position: 'relative',
               }}
             >
-              {/* Header Interno */}
               <div style={{ padding: '16px', paddingBottom: '8px' }}>
                 <div
                   style={{
@@ -489,7 +470,7 @@ const HomeScene: React.FC = () => {
                 </button>
               </div>
 
-              {/* Empty State */}
+              {/* Empty state */}
               <div
                 style={{
                   flex: 1,
@@ -519,7 +500,7 @@ const HomeScene: React.FC = () => {
 
                 <div
                   style={{
-                    fontSize: '14px',
+                    fontSize: '13px',
                     fontWeight: 600,
                     color: T.graphite,
                     marginTop: '12px',
@@ -529,17 +510,17 @@ const HomeScene: React.FC = () => {
                 </div>
                 <div
                   style={{
-                    fontSize: '11px',
+                    fontSize: '10px',
                     color: T.stone,
                     marginTop: '4px',
-                    lineHeight: 1.4,
+                    textAlign: 'center',
                   }}
                 >
                   Clique para iniciar o processo de admissão
                 </div>
               </div>
 
-              {/* FAB */}
+              {/* FAB canto direito */}
               <div
                 style={{
                   position: 'absolute',
@@ -553,10 +534,8 @@ const HomeScene: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   boxShadow: '0 8px 20px rgba(245,166,35,0.4)',
-                  transform: `scale(${fabFinalScale})`,
-                  opacity: fabOpacity,
+                  transform: `scale(${fabScale})`,
                   zIndex: 30,
-                  cursor: 'pointer',
                 }}
               >
                 <svg
@@ -573,15 +552,15 @@ const HomeScene: React.FC = () => {
                 </svg>
               </div>
 
-              {/* DRAWER LATERAL */}
-              {drawerX > -280 && (
+              {/* DRAWER */}
+              {drawerX > -220 && (
                 <>
                   <div
                     style={{
                       position: 'absolute',
                       inset: 0,
                       backgroundColor: 'rgba(0,0,0,0.3)',
-                      opacity: interpolate(drawerX, [-280, 0], [0, 0.4]),
+                      opacity: interpolate(drawerX, [-220, 0], [0, 0.4]),
                       zIndex: 39,
                     }}
                   />
@@ -593,19 +572,17 @@ const HomeScene: React.FC = () => {
                       width: '220px',
                       height: '100%',
                       backgroundColor: T.surface,
-                      boxShadow: '6px 0 24px rgba(0,0,0,0.12)',
+                      boxShadow: '4px 0 20px rgba(0,0,0,0.1)',
                       transform: `translateX(${drawerX}px)`,
                       zIndex: 40,
                       display: 'flex',
                       flexDirection: 'column',
                     }}
                   >
-                    {/* Topo do Drawer */}
                     <div
                       style={{
                         padding: '16px',
                         paddingTop: '48px',
-                        borderBottom: `1px solid ${T.hairline}`,
                       }}
                     >
                       <div
@@ -622,14 +599,20 @@ const HomeScene: React.FC = () => {
                         style={{
                           fontSize: '10px',
                           color: T.stone,
-                          marginTop: '6px',
+                          marginTop: '2px',
                         }}
                       >
                         Eng. Roberto Lima
                       </div>
                     </div>
 
-                    {/* Itens do Menu */}
+                    <div
+                      style={{
+                        height: '1px',
+                        backgroundColor: T.hairline,
+                      }}
+                    />
+
                     <div style={{ paddingTop: '8px' }}>
                       <div
                         style={{
@@ -681,13 +664,13 @@ const HomeScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 3 — FORMULÁRIO (frames 270 → 510 / 9s → 17s)
+// CENA 3 — FORMULÁRIO (s(9) → s(18) = 270 → 540 / 270 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const FormScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Transição de Entrada: local frame 0→30 (global 270→300)
+  // Transição frame 0→25 (relativo): Novo iPhone translateX 400→0 spring
   const enterSpring = spring({
     frame,
     fps,
@@ -695,67 +678,72 @@ const FormScene: React.FC = () => {
   });
   const enterX = interpolate(enterSpring, [0, 1], [400, 0]);
 
-  // Transição de Saída: local frame 230→240 (global 500→510)
-  const exitX = interpolate(frame, [230, 240], [0, -400], {
+  // Saída nos últimos frames
+  const exitX = interpolate(frame, [255, 270], [0, -400], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const finalX = enterX + exitX;
 
-  // Helper de Digitação com Cursor
-  const getTypedInfo = (text: string, start: number, end: number) => {
+  // Helper de digitação sincronizado
+  const getTyped = (text: string, start: number, duration: number) => {
     if (frame < start) {
       return { text: '', active: false, cursor: false };
     }
+    const end = start + duration;
     if (frame >= end) {
       return { text, active: false, cursor: false };
     }
-    const progress = (frame - start) / (end - start);
+    const progress = (frame - start) / duration;
     const chars = Math.floor(progress * text.length);
-    const cursor = Math.floor(frame / 6) % 2 === 0;
+    const cursor = Math.floor(frame / 4) % 2 === 0;
     return { text: text.slice(0, chars), active: true, cursor };
   };
 
-  // 4 Campos (local frames):
-  // Campo 1: João Silva (frames 40→70)
-  const c1 = getTypedInfo('João Silva', 40, 70);
+  // CAMPO 1: frame 103 (700ms = 21f)
+  const c1 = getTyped('João Silva', 103, 21);
 
-  // Campo 2: +55 (11) 98765-4321 (frames 75→105)
-  const c2 = getTypedInfo('+55 (11) 98765-4321', 75, 105);
+  // CAMPO 2: frame 120 (650ms = 20f)
+  const c2 = getTyped('+55 (11) 98765-4321', 120, 20);
 
-  // Campo 3: +55 (11) 91234-5678 (frames 110→135)
-  const c3 = getTypedInfo('+55 (11) 91234-5678', 110, 135);
+  // CAMPO 3: frame 140 (550ms = 16f)
+  const c3 = getTyped('+55 (11) 91234-5678', 140, 16);
 
-  // Campo 4: Analista de Planejamento (frames 140→170)
-  const c4 = getTypedInfo('Analista de Planejamento', 140, 170);
+  // CAMPO 4: frame 155 (550ms = 16f)
+  const c4 = getTyped('Analista de Planejamento', 155, 16);
 
-  // Botão "Iniciar Processo" (ativa de local 170→190, press em 200)
-  const btnOpacity = interpolate(frame, [170, 190], [0.35, 1.0], {
+  // BOTÃO "Iniciar Processo"
+  // frame 0→160: opacity 0.35
+  // frame 160→175: opacity 0.35→1.0
+  // frame 230: scale 1→0.97 (5f) → 1.0 (5f), bg #111→#333→#111
+  const btnOpacity = interpolate(frame, [160, 175], [0.35, 1.0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const btnScale = interpolate(frame, [200, 205, 210], [1, 0.97, 1], {
+  const btnScale = interpolate(frame, [230, 235, 240], [1.0, 0.97, 1.0], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const btnBg =
+    frame >= 230 && frame <= 240
+      ? interpolate(frame, [230, 235, 240], [0, 1, 0]) > 0.5
+        ? '#333333'
+        : '#111111'
+      : '#111111';
+
+  // OVERLAY WA frame 240→260: AbsoluteFill rgba(240,240,240,0→0.95)
+  const overlayOpacity = interpolate(frame, [240, 260], [0, 0.95], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // Overlay WhatsApp (frames 205→220)
-  const overlayOpacity = interpolate(frame, [205, 220], [0, 0.95], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // Ícone WhatsApp (frames 210→230)
+  // Círculo #25D366 80px: spring scale 0.15→1.0 frame 245→265
   const waSpring = spring({
-    frame: frame - 210,
+    frame: frame - 245,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
-  const waScale = interpolate(waSpring, [0, 1], [0.2, 1.0]);
-  const waOpacity = interpolate(frame, [210, 225], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  const waScale = interpolate(waSpring, [0, 1], [0.15, 1.0]);
 
   return (
     <AbsoluteFill
@@ -781,7 +769,7 @@ const FormScene: React.FC = () => {
                 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
           >
-            {/* STATUS BAR */}
+            {/* STATUS BAR: "9:42" */}
             <div
               style={{
                 height: '40px',
@@ -797,7 +785,7 @@ const FormScene: React.FC = () => {
             >
               <span
                 style={{
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: 600,
                   color: T.ink,
                 }}
@@ -815,7 +803,7 @@ const FormScene: React.FC = () => {
               </span>
             </div>
 
-            {/* NAVBAR */}
+            {/* NAVBAR bg white */}
             <div
               style={{
                 height: '46px',
@@ -848,7 +836,7 @@ const FormScene: React.FC = () => {
               <div style={{ width: '16px' }} />
             </div>
 
-            {/* CONTEÚDO */}
+            {/* CONTEÚDO padding 16px */}
             <div
               style={{
                 flex: 1,
@@ -865,7 +853,7 @@ const FormScene: React.FC = () => {
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
                   color: T.stone,
-                  marginBottom: '6px',
+                  marginBottom: '5px',
                 }}
               >
                 TRIAGEM E ADMISSÃO
@@ -875,7 +863,7 @@ const FormScene: React.FC = () => {
                 style={{
                   fontSize: '17px',
                   fontWeight: 400,
-                  lineHeight: 1.15,
+                  lineHeight: 1.1,
                   color: T.ink,
                   marginBottom: '3px',
                 }}
@@ -906,7 +894,7 @@ const FormScene: React.FC = () => {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '14px',
+                  gap: '12px',
                 }}
               >
                 {/* CAMPO 1 */}
@@ -924,15 +912,24 @@ const FormScene: React.FC = () => {
                   <div
                     style={{
                       borderBottom: `1px solid ${c1.active ? T.ink : T.hairline}`,
-                      padding: '6px 0',
+                      padding: '4px 0',
                       fontSize: '13px',
                       color: T.ink,
-                      minHeight: '28px',
+                      minHeight: '26px',
                     }}
                   >
                     {c1.text}
                     {c1.cursor && (
-                      <span style={{ color: T.accent, fontWeight: 700 }}>|</span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: '2px',
+                          height: '13px',
+                          backgroundColor: T.ink,
+                          marginLeft: '1px',
+                          verticalAlign: 'middle',
+                        }}
+                      />
                     )}
                   </div>
                 </div>
@@ -952,15 +949,24 @@ const FormScene: React.FC = () => {
                   <div
                     style={{
                       borderBottom: `1px solid ${c2.active ? T.ink : T.hairline}`,
-                      padding: '6px 0',
+                      padding: '4px 0',
                       fontSize: '13px',
                       color: T.ink,
-                      minHeight: '28px',
+                      minHeight: '26px',
                     }}
                   >
                     {c2.text}
                     {c2.cursor && (
-                      <span style={{ color: T.accent, fontWeight: 700 }}>|</span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: '2px',
+                          height: '13px',
+                          backgroundColor: T.ink,
+                          marginLeft: '1px',
+                          verticalAlign: 'middle',
+                        }}
+                      />
                     )}
                   </div>
                 </div>
@@ -980,15 +986,24 @@ const FormScene: React.FC = () => {
                   <div
                     style={{
                       borderBottom: `1px solid ${c3.active ? T.ink : T.hairline}`,
-                      padding: '6px 0',
+                      padding: '4px 0',
                       fontSize: '13px',
                       color: T.ink,
-                      minHeight: '28px',
+                      minHeight: '26px',
                     }}
                   >
                     {c3.text}
                     {c3.cursor && (
-                      <span style={{ color: T.accent, fontWeight: 700 }}>|</span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: '2px',
+                          height: '13px',
+                          backgroundColor: T.ink,
+                          marginLeft: '1px',
+                          verticalAlign: 'middle',
+                        }}
+                      />
                     )}
                   </div>
                 </div>
@@ -1008,29 +1023,38 @@ const FormScene: React.FC = () => {
                   <div
                     style={{
                       borderBottom: `1px solid ${c4.active ? T.ink : T.hairline}`,
-                      padding: '6px 0',
+                      padding: '4px 0',
                       fontSize: '13px',
                       color: T.ink,
-                      minHeight: '28px',
+                      minHeight: '26px',
                     }}
                   >
                     {c4.text}
                     {c4.cursor && (
-                      <span style={{ color: T.accent, fontWeight: 700 }}>|</span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          width: '2px',
+                          height: '13px',
+                          backgroundColor: T.ink,
+                          marginLeft: '1px',
+                          verticalAlign: 'middle',
+                        }}
+                      />
                     )}
                   </div>
                 </div>
               </div>
 
               {/* BOTÃO */}
-              <div style={{ marginTop: '20px' }}>
+              <div style={{ marginTop: '18px' }}>
                 <button
                   type="button"
                   style={{
                     height: '38px',
                     borderRadius: '5px',
                     width: '100%',
-                    backgroundColor: T.ink,
+                    backgroundColor: btnBg,
                     color: '#FFFFFF',
                     fontSize: '12px',
                     fontWeight: 500,
@@ -1047,16 +1071,14 @@ const FormScene: React.FC = () => {
                 </button>
               </div>
 
-              {/* OVERLAY WHATSAPP */}
-              {frame >= 205 && (
+              {/* OVERLAY WA */}
+              {frame >= 240 && (
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    backgroundColor: '#FFFFFF',
-                    opacity: overlayOpacity,
+                    backgroundColor: `rgba(240,240,240, ${overlayOpacity})`,
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
                     zIndex: 50,
@@ -1072,7 +1094,6 @@ const FormScene: React.FC = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       transform: `scale(${waScale})`,
-                      opacity: waOpacity,
                       boxShadow: '0 12px 30px rgba(37, 211, 102, 0.4)',
                     }}
                   >
@@ -1096,9 +1117,9 @@ const FormScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 4 — WHATSAPP CANDIDATO (frames 510 → 1140 / 17s → 38s)
+// CENA 4 — WHATSAPP JOTA (s(18) → s(38) = 540 → 1140 / 600 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-interface MessageItem {
+interface WAMsg {
   id: number;
   frame: number;
   from: 'jota' | 'joao';
@@ -1106,103 +1127,110 @@ interface MessageItem {
   time: string;
 }
 
-const MESSAGES: MessageItem[] = [
+const WA_MESSAGES: WAMsg[] = [
   {
     id: 1,
-    frame: 35, // global 545
+    frame: 5,
     from: 'jota',
     text: 'Olá! Sou o Jota, assistente de operações do Consórcio Lote 15. Fui encarregado de conduzir seu processo de contratação.',
     time: '09:43',
   },
   {
     id: 2,
-    frame: 80, // global 590
+    frame: 62,
     from: 'jota',
     text: 'Confirma que este número pertence a João Silva?',
     time: '09:43',
   },
   {
     id: 3,
-    frame: 130, // global 640
+    frame: 100,
     from: 'joao',
     text: 'Sim, sou eu.',
     time: '09:44',
   },
   {
     id: 4,
-    frame: 175, // global 685
+    frame: 146,
     from: 'jota',
-    text: 'Perfeito, João! Bem-vindo ao processo. Vou te guiar em cada etapa.',
+    text: 'Perfeito, João! Bem-vindo ao processo.',
     time: '09:44',
   },
   {
     id: 5,
-    frame: 220, // global 730
+    frame: 198,
     from: 'jota',
     text: 'Preciso de 2 documentos: RG e CPF. Pode enviar as fotos aqui?',
     time: '09:45',
   },
   {
     id: 6,
-    frame: 265, // global 775
+    frame: 230,
     from: 'joao',
     text: 'Claro!',
     time: '09:45',
   },
   {
     id: 7,
-    frame: 290, // global 800
+    frame: 255,
     from: 'joao',
     text: '📄 RG_frente.jpg',
     time: '09:46',
   },
   {
     id: 8,
-    frame: 310, // global 820
+    frame: 272,
     from: 'joao',
     text: '📄 RG_verso.jpg',
     time: '09:46',
   },
   {
     id: 9,
-    frame: 330, // global 840
+    frame: 289,
     from: 'joao',
     text: '📄 CPF.jpg',
-    time: '09:47',
+    time: '09:46',
   },
   {
     id: 10,
-    frame: 400, // global 910
+    frame: 357,
     from: 'jota',
-    text: 'Recebi os 3 documentos. Vou validar. ✓',
+    text: 'Recebi os 3 documentos. Validando...',
     time: '09:47',
   },
   {
     id: 11,
-    frame: 440, // global 950
+    frame: 390,
     from: 'jota',
-    text: 'Documentos validados com sucesso! ✅',
-    time: '09:48',
+    text: 'Documentos validados. ✅',
+    time: '09:47',
   },
   {
     id: 12,
-    frame: 480, // global 990
+    frame: 425,
     from: 'jota',
-    text: 'Vou sinalizar o RH para validação. Em breve você recebe o retorno.',
+    text: 'O candidato não precisa ir a lugar nenhum.',
     time: '09:48',
   },
   {
     id: 13,
-    frame: 520, // global 1030
-    from: 'joao',
-    text: 'Muito obrigado, Jota!',
-    time: '09:49',
+    frame: 460,
+    from: 'jota',
+    text: 'O gestor não precisa ligar para ninguém.',
+    time: '09:48',
   },
   {
     id: 14,
-    frame: 550, // global 1060
+    frame: 499,
     from: 'jota',
-    text: 'Estou à disposição. Até breve! 👋',
+    text: 'Quando tudo está validado...',
+    time: '09:49',
+  },
+  {
+    id: 15,
+    frame: 570,
+    from: 'jota',
+    text: 'Jota sinalizou o RH. ✓\nExame médico agendado pela MetricLab.',
     time: '09:49',
   },
 ];
@@ -1211,7 +1239,7 @@ const WhatsAppScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Transição de Entrada: local frame 0→35 (global 510→545)
+  // Transição frame 0→25: Novo iPhone translateX 400→0 spring
   const phoneSpring = spring({
     frame,
     fps,
@@ -1219,21 +1247,27 @@ const WhatsAppScene: React.FC = () => {
   });
   const enterX = interpolate(phoneSpring, [0, 1], [400, 0]);
 
-  // Transição de Saída: local frame 625→630 (global 1135→1140)
-  const exitX = interpolate(frame, [625, 630], [0, -400], {
+  // Saída no final da cena
+  const exitX = interpolate(frame, [590, 600], [0, -400], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const finalX = enterX + exitX;
 
-  // Typing indicator dots bounce: frame 360→400 (global 870→910)
-  const showTyping = frame >= 360 && frame < 400;
+  // Typing indicators:
+  // 1. frame 160→198
+  // 2. frame 300→357
+  // 3. frame 539→570
+  const isTyping =
+    (frame >= 160 && frame < 198) ||
+    (frame >= 300 && frame < 357) ||
+    (frame >= 539 && frame < 570);
 
-  // Auto-scroll dinâmico calculado com base na altura acumulada das mensagens
+  // Auto-scroll suave calculado para manter as mensagens recentes visíveis
   const scrollY = interpolate(
     frame,
-    [260, 300, 340, 400, 440, 490, 530, 560],
-    [0, -70, -170, -260, -370, -480, -580, -660],
+    [220, 260, 290, 360, 420, 460, 500, 570],
+    [0, -70, -160, -250, -360, -440, -530, -640],
     {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
@@ -1264,7 +1298,7 @@ const WhatsAppScene: React.FC = () => {
                 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
           >
-            {/* STATUS BAR */}
+            {/* STATUS BAR bg #F7F7F5 */}
             <div
               style={{
                 height: '40px',
@@ -1280,7 +1314,7 @@ const WhatsAppScene: React.FC = () => {
             >
               <span
                 style={{
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: 600,
                   color: T.ink,
                 }}
@@ -1298,7 +1332,7 @@ const WhatsAppScene: React.FC = () => {
               </span>
             </div>
 
-            {/* WA HEADER (56px) */}
+            {/* WA HEADER 56px */}
             <div
               style={{
                 height: '56px',
@@ -1315,7 +1349,7 @@ const WhatsAppScene: React.FC = () => {
               <span
                 style={{
                   fontSize: '16px',
-                  color: T.ink,
+                  color: '#111111',
                   fontWeight: 600,
                   cursor: 'pointer',
                 }}
@@ -1323,13 +1357,13 @@ const WhatsAppScene: React.FC = () => {
                 ←
               </span>
 
-              {/* Avatar Jota */}
+              {/* Avatar 34px */}
               <div
                 style={{
                   width: '34px',
                   height: '34px',
                   borderRadius: '50%',
-                  backgroundColor: T.hairline,
+                  backgroundColor: '#E5E5E3',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1338,21 +1372,20 @@ const WhatsAppScene: React.FC = () => {
                 <span
                   style={{
                     fontSize: '13px',
-                    fontWeight: 600,
-                    color: T.graphite,
+                    fontWeight: 500,
+                    color: '#6B6B6B',
                   }}
                 >
                   J
                 </span>
               </div>
 
-              {/* Info */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span
                   style={{
                     fontSize: '12px',
-                    fontWeight: 600,
-                    color: T.ink,
+                    fontWeight: 500,
+                    color: '#111111',
                   }}
                 >
                   Jota · MetricLab
@@ -1360,7 +1393,7 @@ const WhatsAppScene: React.FC = () => {
                 <span
                   style={{
                     fontSize: '9px',
-                    color: T.stone,
+                    color: '#9B9B9B',
                   }}
                 >
                   online
@@ -1368,7 +1401,7 @@ const WhatsAppScene: React.FC = () => {
               </div>
             </div>
 
-            {/* ÁREA DE MENSAGENS (COM AUTO-SCROLL) */}
+            {/* MSGS bg #ECECEC */}
             <div
               style={{
                 flex: 1,
@@ -1381,15 +1414,15 @@ const WhatsAppScene: React.FC = () => {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '8px',
+                  gap: '5px',
                   transform: `translateY(${scrollY}px)`,
-                  transition: 'transform 0.2s ease-out',
+                  transition: 'transform 0.15s ease-out',
                 }}
               >
-                {MESSAGES.map((msg) => {
+                {WA_MESSAGES.map((msg) => {
                   if (frame < msg.frame) return null;
 
-                  const msgOpacity = interpolate(
+                  const opacity = interpolate(
                     frame,
                     [msg.frame, msg.frame + 10],
                     [0, 1],
@@ -1398,7 +1431,7 @@ const WhatsAppScene: React.FC = () => {
                       extrapolateRight: 'clamp',
                     }
                   );
-                  const msgTranslateY = interpolate(
+                  const translateY = interpolate(
                     frame,
                     [msg.frame, msg.frame + 10],
                     [8, 0],
@@ -1416,14 +1449,14 @@ const WhatsAppScene: React.FC = () => {
                       style={{
                         alignSelf: isJota ? 'flex-start' : 'flex-end',
                         maxWidth: '83%',
-                        backgroundColor: isJota ? T.surface : T.waGreen,
+                        backgroundColor: isJota ? '#FFFFFF' : '#DCF8C6',
                         borderRadius: isJota
                           ? '3px 14px 14px 3px'
                           : '14px 3px 3px 14px',
                         padding: '8px 11px',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
-                        opacity: msgOpacity,
-                        transform: `translateY(${msgTranslateY}px)`,
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
+                        opacity,
+                        transform: `translateY(${translateY}px)`,
                         display: 'flex',
                         flexDirection: 'column',
                       }}
@@ -1432,8 +1465,8 @@ const WhatsAppScene: React.FC = () => {
                         style={{
                           fontSize: '11px',
                           lineHeight: 1.45,
-                          color: T.ink,
-                          wordBreak: 'break-word',
+                          color: '#111111',
+                          whiteSpace: 'pre-line',
                         }}
                       >
                         {msg.text}
@@ -1441,18 +1474,18 @@ const WhatsAppScene: React.FC = () => {
                       <div
                         style={{
                           fontSize: '8px',
-                          color: T.stone,
+                          color: '#9B9B9B',
                           textAlign: 'right',
-                          marginTop: '3px',
+                          marginTop: '2px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'flex-end',
-                          gap: '3px',
+                          gap: '2px',
                         }}
                       >
                         <span>{msg.time}</span>
                         {!isJota && (
-                          <span style={{ color: '#53bdeb', fontSize: '10px' }}>
+                          <span style={{ color: '#53bdeb', fontSize: '9px' }}>
                             ✓✓
                           </span>
                         )}
@@ -1462,17 +1495,17 @@ const WhatsAppScene: React.FC = () => {
                 })}
 
                 {/* TYPING INDICATOR */}
-                {showTyping && (
+                {isTyping && (
                   <div
                     style={{
                       alignSelf: 'flex-start',
-                      backgroundColor: T.surface,
+                      backgroundColor: '#FFFFFF',
                       borderRadius: '3px 14px 14px 3px',
-                      padding: '10px 14px',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+                      padding: '8px 12px',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px',
+                      gap: '3px',
                     }}
                   >
                     {[0, 1, 2].map((idx) => {
@@ -1484,7 +1517,7 @@ const WhatsAppScene: React.FC = () => {
                             width: '5px',
                             height: '5px',
                             borderRadius: '50%',
-                            backgroundColor: T.stone,
+                            backgroundColor: '#9B9B9B',
                             transform: `translateY(${bounce}px)`,
                           }}
                         />
@@ -1502,48 +1535,48 @@ const WhatsAppScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 5 — CELULAR DO GESTOR (frames 1140 → 1320 / 38s → 44s)
+// CENA 5 — GESTOR RECEBE (s(38) → s(47.92) = 1140 → 1438 / 298 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const GestorScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Transição de Entrada: local frame 5→35 (global 1145→1175)
+  // Transição frame 0→25: Novo iPhone translateX 400→0 spring
   const phoneSpring = spring({
-    frame: frame - 5,
+    frame,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
   const enterX = interpolate(phoneSpring, [0, 1], [400, 0]);
 
-  // Transição de Saída: local frame 175→180 (global 1315→1320)
-  const exitY = interpolate(frame, [175, 180], [0, -800], {
+  // Saída nos últimos frames
+  const exitY = interpolate(frame, [278, 298], [0, -900], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const exitOpacity = interpolate(frame, [175, 180], [1, 0], {
+  const exitOpacity = interpolate(frame, [278, 298], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // Notificação Card: local frame 35→55 (global 1175→1195)
+  // frame 8→30: NOTIFICAÇÃO aparece, translateY -12→0 + opacity 0→1 spring
   const notifSpring = spring({
-    frame: frame - 35,
+    frame: frame - 8,
     fps,
-    config: { damping: 16 },
+    config: { damping: 14, mass: 0.6 },
   });
   const notifY = interpolate(notifSpring, [0, 1], [-12, 0]);
-  const notifOpacity = interpolate(frame, [35, 45], [0, 1], {
+  const notifOpacity = interpolate(frame, [8, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // Summary Card: local frame 70→100 (global 1210→1240)
-  const cardY = interpolate(frame, [70, 95], [8, 0], {
+  // frame 59→85: SUMMARY CARD aparece, translateY 8→0 + opacity 0→1 ease
+  const cardY = interpolate(frame, [59, 85], [8, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const cardOpacity = interpolate(frame, [70, 95], [0, 1], {
+  const cardOpacity = interpolate(frame, [59, 85], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -1577,7 +1610,7 @@ const GestorScene: React.FC = () => {
                 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             }}
           >
-            {/* STATUS BAR */}
+            {/* STATUS BAR bg #F7F7F5: "9:50" */}
             <div
               style={{
                 height: '40px',
@@ -1593,9 +1626,9 @@ const GestorScene: React.FC = () => {
             >
               <span
                 style={{
-                  fontSize: '12px',
+                  fontSize: '11px',
                   fontWeight: 600,
-                  color: T.ink,
+                  color: '#111111',
                 }}
               >
                 9:50
@@ -1603,7 +1636,7 @@ const GestorScene: React.FC = () => {
               <span
                 style={{
                   fontSize: '10px',
-                  color: T.ink,
+                  color: '#111111',
                   letterSpacing: '2px',
                 }}
               >
@@ -1649,8 +1682,8 @@ const GestorScene: React.FC = () => {
                 <span
                   style={{
                     fontSize: '12px',
-                    fontWeight: 600,
-                    color: T.ink,
+                    fontWeight: 500,
+                    color: '#111111',
                   }}
                 >
                   Eng. Roberto Lima
@@ -1658,7 +1691,7 @@ const GestorScene: React.FC = () => {
                 <span
                   style={{
                     fontSize: '9px',
-                    color: T.stone,
+                    color: '#9B9B9B',
                   }}
                 >
                   Gestor · Consórcio Lote 15
@@ -1676,14 +1709,15 @@ const GestorScene: React.FC = () => {
                 gap: '12px',
               }}
             >
-              {/* NOTIFICAÇÃO (frame 35+) */}
-              {frame >= 35 && (
+              {/* NOTIFICAÇÃO (frame 8→30) */}
+              {frame >= 8 && (
                 <div
                   style={{
-                    backgroundColor: T.surface,
+                    backgroundColor: '#FFFFFF',
                     borderRadius: '10px',
-                    borderLeft: `3px solid ${T.accent}`,
+                    borderLeft: '3px solid #F5A623',
                     padding: '12px 14px',
+                    margin: '10px 4px',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
                     transform: `translateY(${notifY}px)`,
                     opacity: notifOpacity,
@@ -1693,7 +1727,7 @@ const GestorScene: React.FC = () => {
                     style={{
                       fontSize: '9px',
                       fontWeight: 600,
-                      color: T.accent,
+                      color: '#F5A623',
                       textTransform: 'uppercase',
                       letterSpacing: '0.3px',
                       marginBottom: '4px',
@@ -1704,7 +1738,7 @@ const GestorScene: React.FC = () => {
                   <div
                     style={{
                       fontSize: '12px',
-                      color: T.ink,
+                      color: '#111111',
                       lineHeight: 1.4,
                     }}
                   >
@@ -1714,36 +1748,37 @@ const GestorScene: React.FC = () => {
                 </div>
               )}
 
-              {/* SUMMARY CARD (frame 70+) */}
-              {frame >= 70 && (
+              {/* SUMMARY CARD (frame 59→85) */}
+              {frame >= 59 && (
                 <div
                   style={{
-                    backgroundColor: T.surface,
-                    border: `1px solid ${T.hairline}`,
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #E5E5E3',
                     borderRadius: '8px',
+                    margin: '10px 4px',
                     overflow: 'hidden',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
                     transform: `translateY(${cardY}px)`,
                     opacity: cardOpacity,
                   }}
                 >
-                  {/* Linha 1: Candidato */}
+                  {/* Linha 1 */}
                   <div
                     style={{
                       padding: '8px 12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      borderBottom: `1px solid ${T.hairline}`,
+                      borderBottom: '1px solid #E5E5E3',
                     }}
                   >
-                    <span style={{ fontSize: '9px', color: T.stone }}>
+                    <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
                       CANDIDATO
                     </span>
                     <span
                       style={{
                         fontSize: '11px',
-                        color: T.ink,
+                        color: '#111111',
                         fontWeight: 500,
                       }}
                     >
@@ -1751,21 +1786,21 @@ const GestorScene: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Linha 2: Cargo */}
+                  {/* Linha 2 */}
                   <div
                     style={{
                       padding: '8px 12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      borderBottom: `1px solid ${T.hairline}`,
+                      borderBottom: '1px solid #E5E5E3',
                     }}
                   >
-                    <span style={{ fontSize: '9px', color: T.stone }}>CARGO</span>
+                    <span style={{ fontSize: '9px', color: '#9B9B9B' }}>CARGO</span>
                     <span
                       style={{
                         fontSize: '11px',
-                        color: T.ink,
+                        color: '#111111',
                         fontWeight: 500,
                       }}
                     >
@@ -1773,23 +1808,23 @@ const GestorScene: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Linha 3: Empresa */}
+                  {/* Linha 3 */}
                   <div
                     style={{
                       padding: '8px 12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      borderBottom: `1px solid ${T.hairline}`,
+                      borderBottom: '1px solid #E5E5E3',
                     }}
                   >
-                    <span style={{ fontSize: '9px', color: T.stone }}>
+                    <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
                       EMPRESA
                     </span>
                     <span
                       style={{
                         fontSize: '11px',
-                        color: T.ink,
+                        color: '#111111',
                         fontWeight: 500,
                       }}
                     >
@@ -1797,17 +1832,17 @@ const GestorScene: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Linha 4: Documentos */}
+                  {/* Linha 4 */}
                   <div
                     style={{
                       padding: '8px 12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      borderBottom: `1px solid ${T.hairline}`,
+                      borderBottom: '1px solid #E5E5E3',
                     }}
                   >
-                    <span style={{ fontSize: '9px', color: T.stone }}>
+                    <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
                       DOCUMENTOS
                     </span>
                     <span
@@ -1824,18 +1859,18 @@ const GestorScene: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Linha 5: Entrevista */}
+                  {/* Linha 5 */}
                   <div
                     style={{
                       padding: '8px 12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      borderBottom: `1px solid ${T.hairline}`,
+                      borderBottom: '1px solid #E5E5E3',
                     }}
                   >
-                    <span style={{ fontSize: '9px', color: T.stone }}>
-                      ENTREVISTA
+                    <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
+                      EXAME MÉDICO
                     </span>
                     <span
                       style={{
@@ -1847,11 +1882,11 @@ const GestorScene: React.FC = () => {
                         borderRadius: '99px',
                       }}
                     >
-                      Agendada · 14h
+                      Agendado
                     </span>
                   </div>
 
-                  {/* Linha 6: Próximo */}
+                  {/* Linha 6 */}
                   <div
                     style={{
                       padding: '8px 12px',
@@ -1860,13 +1895,13 @@ const GestorScene: React.FC = () => {
                       justifyContent: 'space-between',
                     }}
                   >
-                    <span style={{ fontSize: '9px', color: T.stone }}>
+                    <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
                       PRÓXIMO
                     </span>
                     <span
                       style={{
                         fontSize: '11px',
-                        color: T.blue,
+                        color: '#2563eb',
                         fontWeight: 600,
                       }}
                     >
@@ -1884,35 +1919,59 @@ const GestorScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 6 — ENCERRAMENTO (frames 1320 → 1350 / 44s → 45s)
+// CENA 6 — ENCERRAMENTO (s(47.92) → 1778 / 340 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const EndScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // LOGO: frame 5→20
-  const logoOpacity = interpolate(frame, [5, 20], [0, 1], {
+  // frame 0→20: "M." Inter 64px weight 900, "M" #111111 "." #F5A623, letter-spacing -2px, opacity 0→1 + translateY 8→0
+  const mOpacity = interpolate(frame, [0, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const logoTranslateY = interpolate(frame, [5, 20], [8, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // SUBTÍTULO: frame 10→25
-  const subOpacity = interpolate(frame, [10, 25], [0, 1], {
+  const mY = interpolate(frame, [0, 20], [8, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // HAIRLINE: frame 15→25
-  const hairOpacity = interpolate(frame, [15, 25], [0, 1], {
+  // frame 8→25: "Fluxo de Contratação" Inter 28px weight 700 #111111, opacity 0→1
+  const subOpacity = interpolate(frame, [8, 25], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // POWERED: frame 18→30
-  const powOpacity = interpolate(frame, [18, 30], [0, 1], {
+  // frame 30: Hairline 60px × 1px bg #E5E5E3 center, opacity 0→1
+  const hairOpacity = interpolate(frame, [25, 35], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // frame 55→70: "Processo completo." Inter 16px weight 500 #111111, opacity 0→1
+  const f1Opacity = interpolate(frame, [55, 70], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // frame 93→108: "Rastreável." Inter 16px weight 500 #111111, opacity 0→1
+  const f2Opacity = interpolate(frame, [93, 108], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // frame 126→141: "Sem depender de ninguém específico." Inter 14px weight 400 #6B6B6B, opacity 0→1
+  const f3Opacity = interpolate(frame, [126, 141], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // frame 163→200: "Para empresas que crescem e precisam que a operação acompanhe." Inter 14px weight 400 #6B6B6B, text-align center, opacity 0→1
+  const f4Opacity = interpolate(frame, [163, 195], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // frame 256→290: "MetricLab." Inter 22px weight 700 #F5A623, opacity 0→1
+  const f5Opacity = interpolate(frame, [256, 285], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -1942,23 +2001,23 @@ const EndScene: React.FC = () => {
           style={{
             fontSize: '64px',
             fontWeight: 900,
-            color: T.ink,
+            color: '#111111',
             letterSpacing: '-2px',
             lineHeight: 1,
-            opacity: logoOpacity,
-            transform: `translateY(${logoTranslateY}px)`,
+            opacity: mOpacity,
+            transform: `translateY(${mY}px)`,
           }}
         >
-          M<span style={{ color: T.accent }}>.</span>
+          M<span style={{ color: '#F5A623' }}>.</span>
         </div>
 
-        {/* SUBTÍTULO */}
+        {/* "Fluxo de Contratação" */}
         <div
           style={{
             marginTop: '6px',
             fontSize: '28px',
             fontWeight: 700,
-            color: T.ink,
+            color: '#111111',
             letterSpacing: '-0.5px',
             opacity: subOpacity,
           }}
@@ -1966,28 +2025,87 @@ const EndScene: React.FC = () => {
           Fluxo de Contratação
         </div>
 
-        {/* HAIRLINE */}
+        {/* Hairline */}
         <div
           style={{
-            marginTop: '28px',
-            marginBottom: '16px',
+            marginTop: '24px',
+            marginBottom: '20px',
             width: '60px',
             height: '1px',
-            backgroundColor: T.hairline,
+            backgroundColor: '#E5E5E3',
             opacity: hairOpacity,
           }}
         />
 
-        {/* POWERED */}
+        {/* Mensagens Finais Sequenciais */}
         <div
           style={{
-            fontSize: '14px',
-            fontWeight: 700,
-            color: T.accent,
-            opacity: powOpacity,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
           }}
         >
-          Powered by MetricLab
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 500,
+              color: '#111111',
+              opacity: f1Opacity,
+            }}
+          >
+            Processo completo.
+          </div>
+
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 500,
+              color: '#111111',
+              opacity: f2Opacity,
+            }}
+          >
+            Rastreável.
+          </div>
+
+          <div
+            style={{
+              fontSize: '14px',
+              fontWeight: 400,
+              color: '#6B6B6B',
+              opacity: f3Opacity,
+            }}
+          >
+            Sem depender de ninguém específico.
+          </div>
+
+          <div
+            style={{
+              fontSize: '14px',
+              fontWeight: 400,
+              color: '#6B6B6B',
+              textAlign: 'center',
+              lineHeight: 1.5,
+              opacity: f4Opacity,
+              maxWidth: '320px',
+              marginTop: '4px',
+            }}
+          >
+            Para empresas que crescem
+            <br />e precisam que a operação acompanhe.
+          </div>
+
+          <div
+            style={{
+              marginTop: '16px',
+              fontSize: '22px',
+              fontWeight: 700,
+              color: '#F5A623',
+              opacity: f5Opacity,
+            }}
+          >
+            MetricLab.
+          </div>
         </div>
       </div>
     </AbsoluteFill>
@@ -1995,45 +2113,45 @@ const EndScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// COMPOSIÇÃO PRINCIPAL: VideoAdmissao (1350 frames / 45s)
+// COMPOSIÇÃO PRINCIPAL: VideoAdmissao (1778 frames / 59.26s)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 export const VideoAdmissao: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: T.canvas }}>
-      {/* Áudio de Admissão */}
+      {/* Áudio Oficial de Admissão */}
       <Audio
         src={staticFile('audio/admissao.mp3')}
         startFrom={0}
         volume={1}
       />
 
-      {/* CENA 1 — SPLASH (0 → 120 / 0s → 4s) */}
-      <Sequence from={0} durationInFrames={s(4)}>
+      {/* CENA 1 — SPLASH: 0 → s(2.4) = 0 → 72 */}
+      <Sequence from={0} durationInFrames={s(2.4)}>
         <SplashScene />
       </Sequence>
 
-      {/* CENA 2 — HOME DO APP (120 → 270 / 4s → 9s) */}
-      <Sequence from={s(4)} durationInFrames={s(5)}>
+      {/* CENA 2 — HOME DO APP: s(2.4) → s(9) = 72 → 270 (198 frames) */}
+      <Sequence from={s(2.4)} durationInFrames={s(6.6)}>
         <HomeScene />
       </Sequence>
 
-      {/* CENA 3 — FORMULÁRIO (270 → 510 / 9s → 17s) */}
-      <Sequence from={s(9)} durationInFrames={s(8)}>
+      {/* CENA 3 — FORMULÁRIO: s(9) → s(18) = 270 → 540 (270 frames) */}
+      <Sequence from={s(9)} durationInFrames={s(9)}>
         <FormScene />
       </Sequence>
 
-      {/* CENA 4 — WHATSAPP CANDIDATO (510 → 1140 / 17s → 38s) */}
-      <Sequence from={s(17)} durationInFrames={s(21)}>
+      {/* CENA 4 — WHATSAPP JOTA: s(18) → s(38) = 540 → 1140 (600 frames) */}
+      <Sequence from={s(18)} durationInFrames={s(20)}>
         <WhatsAppScene />
       </Sequence>
 
-      {/* CENA 5 — CELULAR DO GESTOR (1140 → 1320 / 38s → 44s) */}
-      <Sequence from={s(38)} durationInFrames={s(6)}>
+      {/* CENA 5 — GESTOR RECEBE: s(38) → s(47.92) = 1140 → 1438 (298 frames) */}
+      <Sequence from={s(38)} durationInFrames={s(9.92)}>
         <GestorScene />
       </Sequence>
 
-      {/* CENA 6 — ENCERRAMENTO (1320 → 1350 / 44s → 45s) */}
-      <Sequence from={s(44)} durationInFrames={s(1)}>
+      {/* CENA 6 — ENCERRAMENTO: s(47.92) → 1778 (340 frames) */}
+      <Sequence from={s(47.92)} durationInFrames={s(11.34)}>
         <EndScene />
       </Sequence>
     </AbsoluteFill>

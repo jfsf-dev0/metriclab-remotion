@@ -9,7 +9,7 @@
     "record:v3": "ts-node scripts/record-v3-rdo.ts",
     "record:v4": "ts-node scripts/record-v4-supervisor.ts",
     "record:all": "npm run record:v1 && npm run record:v2 && npm run record:v3 && npm run record:v4",
-    "build:admissao": "remotion render VideoAdmissao out/admissao.mp4 --props='{}'",
+    "build:admissao": "remotion render VideoAdmissao out/admissao.mp4",
     "build:v1": "remotion render Video1Contratacao out/v1-admissao.mp4 && cp out/v1-admissao.mp4 out/v1-contratacao.mp4",
     "build:v2": "remotion render Video2Vistoria out/v2-vistoria.mp4",
     "build:v3": "remotion render Video3RDO out/v3-rdo.mp4",
