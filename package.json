@@ -4,19 +4,29 @@
   "description": "MetricLab - 4 Vídeos Verticais em Remotion 4",
   "scripts": {
     "start": "remotion studio",
-    "build:v1": "remotion render Video1Contratacao out/v1-contratacao.mp4",
+    "record:v1": "ts-node scripts/record-v1-contratacao.ts",
+    "record:v2": "ts-node scripts/record-v2-vistoria.ts",
+    "record:v3": "ts-node scripts/record-v3-rdo.ts",
+    "record:v4": "ts-node scripts/record-v4-supervisor.ts",
+    "record:all": "npm run record:v1 && npm run record:v2 && npm run record:v3 && npm run record:v4",
+    "build:v1": "remotion render Video1Contratacao out/v1-admissao.mp4 && cp out/v1-admissao.mp4 out/v1-contratacao.mp4",
     "build:v2": "remotion render Video2Vistoria out/v2-vistoria.mp4",
     "build:v3": "remotion render Video3RDO out/v3-rdo.mp4",
     "build:v4": "remotion render Video4Supervisor out/v4-supervisor.mp4",
     "build:all": "npm run build:v1 && npm run build:v2 && npm run build:v3 && npm run build:v4"
   },
   "dependencies": {
+    "@playwright/test": "^1.63.0",
     "@remotion/cli": "^4.0.230",
     "@remotion/tailwind": "^4.0.230",
+    "@types/node": "^22.20.2",
     "lucide-react": "^0.475.0",
+    "playwright": "^1.63.0",
+    "playwright-video": "^2.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remotion": "^4.0.230"
+    "remotion": "^4.0.230",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/react": "^18.3.18",

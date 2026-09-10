@@ -1,76 +1,108 @@
-import React from "react";
-import { Series } from "remotion";
-import { VideoBackground } from "../components/VideoBackground";
-import { OpeningScene } from "../components/OpeningScene";
-import { ClosingScene } from "../components/ClosingScene";
-import { AnimatedMockupContainer } from "../components/AnimatedMockupContainer";
-import { FormularioScreen } from "../screens/contratacao/FormularioScreen";
-import { TrackerScreen } from "../screens/contratacao/TrackerScreen";
-import { WhatsAppScreen } from "../screens/contratacao/WhatsAppScreen";
+import React from 'react';
+import {
+  Audio,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+  AbsoluteFill,
+  OffthreadVideo,
+  Sequence,
+} from 'remotion';
+import { OpeningScene } from '../components/OpeningScene';
+import { ClosingScene } from '../components/ClosingScene';
+import { AnimatedMockupContainer } from '../components/AnimatedMockupContainer';
+import { IPhoneEntrada } from '../components/IPhoneEntrada';
+import { IPhoneSaida } from '../components/IPhoneSaida';
+
+const s = (sec: number) => sec * 30;
 
 export const Video1Contratacao: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
   return (
-    <VideoBackground title="Fluxo de Contratação" subtitle="Onboarding Digital e Validação com IA">
-      <Series>
-        {/* CENA 1 (frames 0-60): Abertura */}
-        <Series.Sequence durationInFrames={60}>
-          <OpeningScene
-            title="Fluxo de Contratação"
-            subtitle="Admissão acelerada de colaboradores com automação e IA"
+    <AbsoluteFill
+      style={{
+        background:
+          'linear-gradient(135deg, #f0f4ff, #f9fafb, #f0fdf4)',
+      }}
+    >
+      <Audio
+        src={staticFile('audio/admissao.mp3')}
+        startFrom={0}
+        volume={1}
+      />
+
+      {/* CENA 1 — Abertura (0-30f / 1s) */}
+      <Sequence from={0} durationInFrames={s(1)}>
+        <OpeningScene titulo="Fluxo de Contratação" />
+      </Sequence>
+
+      {/* CENA 2 — iPhone entra (30-90f) */}
+      <Sequence from={s(1)} durationInFrames={s(2)}>
+        <IPhoneEntrada direction="bottom" />
+      </Sequence>
+
+      {/* CENA 3 — Formulário (90-300f / 3-10s) */}
+      <Sequence from={s(3)} durationInFrames={s(7)}>
+        <AnimatedMockupContainer direction="bottom">
+          <OffthreadVideo
+            src={staticFile('recordings/v1-contratacao.webm')}
+            startFrom={0}
+            endAt={s(7)}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              borderRadius: '44px',
+            }}
           />
-        </Series.Sequence>
+        </AnimatedMockupContainer>
+      </Sequence>
 
-        {/* CENA 2 (frames 60-300 = 240f): Formulário */}
-        <Series.Sequence durationInFrames={240}>
-          <AnimatedMockupContainer entry="bottom" exit="none">
-            <FormularioScreen />
-          </AnimatedMockupContainer>
-        </Series.Sequence>
-
-        {/* CENA 3 (frames 300-480 = 180f): Tracker */}
-        <Series.Sequence durationInFrames={180}>
-          <AnimatedMockupContainer
-            entry="none"
-            exit="top"
-            exitStartFrame={165}
-          >
-            <TrackerScreen stage="documentacao" />
-          </AnimatedMockupContainer>
-        </Series.Sequence>
-
-        {/* CENA 4 (frames 480-720 = 240f): WhatsApp */}
-        <Series.Sequence durationInFrames={240}>
-          <AnimatedMockupContainer
-            entry="right"
-            exit="top"
-            exitStartFrame={225}
-          >
-            <WhatsAppScreen />
-          </AnimatedMockupContainer>
-        </Series.Sequence>
-
-        {/* CENA 5 (frames 720-960 = 240f): Validação IA */}
-        <Series.Sequence durationInFrames={240}>
-          <AnimatedMockupContainer
-            entry="bottom"
-            exit="top"
-            exitStartFrame={225}
-          >
-            <TrackerScreen stage="aprovada" />
-          </AnimatedMockupContainer>
-        </Series.Sequence>
-
-        {/* CENA 6 (frames 960-1200 = 240f): Encerramento */}
-        <Series.Sequence durationInFrames={240}>
-          <ClosingScene
-            lines={[
-              "Processo completo.",
-              "100% Rastreável.",
-              "Sem depender de ninguém.",
-            ]}
+      {/* CENA 4 — Tracker fases (300-540f / 10-18s) */}
+      <Sequence from={s(10)} durationInFrames={s(8)}>
+        <AnimatedMockupContainer direction="left">
+          <OffthreadVideo
+            src={staticFile('recordings/v1-contratacao.webm')}
+            startFrom={s(7)}
+            endAt={s(15)}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              borderRadius: '44px',
+            }}
           />
-        </Series.Sequence>
-      </Series>
-    </VideoBackground>
+        </AnimatedMockupContainer>
+      </Sequence>
+
+      {/* CENA 5 — WhatsApp Jota (540-750f / 18-25s) */}
+      <Sequence from={s(18)} durationInFrames={s(7)}>
+        <AnimatedMockupContainer direction="right">
+          <OffthreadVideo
+            src={staticFile('recordings/v1-contratacao.webm')}
+            startFrom={s(15)}
+            endAt={s(22)}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              borderRadius: '44px',
+            }}
+          />
+        </AnimatedMockupContainer>
+      </Sequence>
+
+      {/* CENA 6 — iPhone some (750-870f / 25-29s) */}
+      <Sequence from={s(25)} durationInFrames={s(4)}>
+        <IPhoneSaida direction="top" />
+      </Sequence>
+
+      {/* CENA 7 — Tagline (870-930f / 29-31s) */}
+      <Sequence from={s(29)} durationInFrames={s(2)}>
+        <ClosingScene tagline="Admissão operacional automatizada." />
+      </Sequence>
+    </AbsoluteFill>
   );
 };

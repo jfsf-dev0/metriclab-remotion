@@ -4,6 +4,7 @@ import { IPhoneMockup } from "./IPhoneMockup";
 
 interface AnimatedMockupContainerProps {
   children: React.ReactNode;
+  direction?: "bottom" | "left" | "right" | "flip" | "top" | "none";
   entry?: "bottom" | "left" | "right" | "flip" | "none";
   exit?: "top" | "fade" | "none";
   exitStartFrame?: number;
@@ -12,6 +13,7 @@ interface AnimatedMockupContainerProps {
 
 export const AnimatedMockupContainer: React.FC<AnimatedMockupContainerProps> = ({
   children,
+  direction,
   entry = "bottom",
   exit = "none",
   exitStartFrame = 9999,
@@ -19,6 +21,8 @@ export const AnimatedMockupContainer: React.FC<AnimatedMockupContainerProps> = (
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  const entryMode = direction || entry;
 
   // Entrance spring animation (20 frames)
   const enterSpring = spring({
@@ -32,25 +36,31 @@ export const AnimatedMockupContainer: React.FC<AnimatedMockupContainerProps> = (
   let rotateY = 0;
   let enterOpacity = 1;
 
-  if (entry === "bottom") {
+  if (entryMode === "bottom") {
     translateY = interpolate(enterSpring, [0, 1], [120, 0]);
     enterOpacity = interpolate(frame, [0, 20], [0, 1], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
-  } else if (entry === "left") {
+  } else if (entryMode === "left") {
     translateX = interpolate(enterSpring, [0, 1], [-120, 0]);
     enterOpacity = interpolate(frame, [0, 20], [0, 1], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
-  } else if (entry === "right") {
+  } else if (entryMode === "right") {
     translateX = interpolate(enterSpring, [0, 1], [120, 0]);
     enterOpacity = interpolate(frame, [0, 20], [0, 1], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
-  } else if (entry === "flip") {
+  } else if (entryMode === "top") {
+    translateY = interpolate(enterSpring, [0, 1], [-120, 0]);
+    enterOpacity = interpolate(frame, [0, 20], [0, 1], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+  } else if (entryMode === "flip") {
     rotateY = interpolate(enterSpring, [0, 1], [90, 0]);
     enterOpacity = interpolate(frame, [0, 15], [0, 1], {
       extrapolateLeft: "clamp",
@@ -82,7 +92,7 @@ export const AnimatedMockupContainer: React.FC<AnimatedMockupContainerProps> = (
         transform: `translateX(${translateX}px) translateY(${finalTranslateY}px) rotateY(${rotateY}deg)`,
         transformStyle: "preserve-3d",
       }}
-      className="flex items-center justify-center"
+      className="w-full h-full flex items-center justify-center"
     >
       <IPhoneMockup scale={scale}>{children}</IPhoneMockup>
     </div>

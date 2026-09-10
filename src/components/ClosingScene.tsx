@@ -2,12 +2,14 @@ import React from "react";
 import { useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 
 interface ClosingSceneProps {
-  lines: string[];
+  lines?: string[];
+  tagline?: string;
   finalBrand?: string;
 }
 
 export const ClosingScene: React.FC<ClosingSceneProps> = ({
   lines,
+  tagline,
   finalBrand = "MetricLab",
 }) => {
   const frame = useCurrentFrame();
@@ -20,20 +22,16 @@ export const ClosingScene: React.FC<ClosingSceneProps> = ({
   });
 
   const scale = interpolate(logoSpring, [0, 1], [0.85, 1]);
-  const opacity = interpolate(frame, [0, 20], [0, 1], {
+  const opacity = interpolate(frame, [0, 10], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  // Fade out towards the end (last 30 frames)
-  const fadeOut = interpolate(frame, [190, 240], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+  const allLines = lines || (tagline ? [tagline] : ["Decisão com base em dados de campo."]);
 
   return (
     <div
-      style={{ opacity: opacity * fadeOut }}
+      style={{ opacity }}
       className="w-full h-full flex flex-col items-center justify-center text-center px-12 z-30"
     >
       <div
@@ -52,16 +50,16 @@ export const ClosingScene: React.FC<ClosingSceneProps> = ({
           </svg>
         </div>
 
-        <h1 className="text-[64px] font-black text-gray-950 tracking-tight leading-none mb-8">
+        <h1 className="text-[64px] font-black text-gray-950 tracking-tight leading-none mb-6">
           {finalBrand}
         </h1>
 
-        {/* Bullet Lines */}
-        <div className="space-y-4 max-w-[750px]">
-          {lines.map((line, index) => {
+        {/* Bullet Lines / Tagline */}
+        <div className="space-y-4 max-w-[800px]">
+          {allLines.map((line, index) => {
             const lineOpacity = interpolate(
               frame,
-              [15 + index * 15, 30 + index * 15],
+              [5 + index * 8, 15 + index * 8],
               [0, 1],
               {
                 extrapolateLeft: "clamp",
@@ -73,7 +71,7 @@ export const ClosingScene: React.FC<ClosingSceneProps> = ({
               <div
                 key={index}
                 style={{ opacity: lineOpacity }}
-                className="text-[36px] font-extrabold text-blue-900 tracking-tight leading-snug"
+                className="text-[38px] font-extrabold text-blue-900 tracking-tight leading-snug"
               >
                 {line}
               </div>

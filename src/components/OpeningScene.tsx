@@ -2,18 +2,21 @@ import React from "react";
 import { useCurrentFrame, interpolate, spring, useVideoConfig } from "remotion";
 
 interface OpeningSceneProps {
-  title: string;
+  title?: string;
+  titulo?: string;
   subtitle?: string;
   tagline?: string;
 }
 
 export const OpeningScene: React.FC<OpeningSceneProps> = ({
   title,
+  titulo,
   subtitle = "Sistema Integrado de Engenharia e Gestão",
   tagline = "CONSORCIO LOTE 15",
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const displayTitle = titulo || title || "MetricLab";
 
   const logoSpring = spring({
     frame,
@@ -22,12 +25,12 @@ export const OpeningScene: React.FC<OpeningSceneProps> = ({
   });
 
   const scale = interpolate(logoSpring, [0, 1], [0.8, 1]);
-  const opacity = interpolate(frame, [0, 20], [0, 1], {
+  const opacity = interpolate(frame, [0, 10], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  const subtitleOpacity = interpolate(frame, [15, 35], [0, 1], {
+  const subtitleOpacity = interpolate(frame, [5, 18], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -66,7 +69,7 @@ export const OpeningScene: React.FC<OpeningSceneProps> = ({
           className="flex flex-col items-center mt-2"
         >
           <div className="text-[38px] font-extrabold text-blue-600 tracking-tight">
-            {title}
+            {displayTitle}
           </div>
           <p className="text-[22px] font-medium text-gray-600 mt-2 max-w-[650px] leading-relaxed">
             {subtitle}
