@@ -28,13 +28,49 @@ const T = {
   waBg: '#ECECEC',
 };
 
+export const SYNC = {
+  abertura: 0.0, // "Um processo feito por MetricLab"
+  vaga: 2.42, // "Uma vaga nasce no canteiro"
+  gestor_abre: 4.04, // "O gestor abre o sistema"
+  aciona: 6.72, // "e aciona o processo"
+  a_partir: 8.14, // "A partir daí"
+  ml_assume: 9.47, // "a MetricLab assume"
+  app_abre: 12.43, // "O app abre a ficha"
+  nome_wpp: 14.9, // "Nome, WhatsApp, cargo"
+  jota_contato: 18.17, // "O Jota, assistente"
+  entra_contato: 20.05, // "entra em contato"
+  confirma: 22.86, // "Confirma a identidade"
+  solicita: 24.6, // "Solicita os documentos"
+  rg_cpf: 27.34, // "RG e CPF"
+  candidato_nao: 29.91, // "O candidato não precisa"
+  gestor_nao: 32.18, // "O gestor não precisa"
+  validado: 34.64, // "Quando tudo está validado"
+  jota_rh: 35.98, // "o Jota sinaliza o RH"
+  gestor_resumo: 38.28, // "O gestor recebe o resumo"
+  cand_cargo: 39.96, // "candidato, cargo"
+  ml_exame: 42.32, // "a MetricLab agendou o exame"
+  decisao: 44.77, // "A decisão final é humana"
+  trabalho_ml: 47.92, // "O trabalho operacional"
+  processo: 49.75, // "Processo completo"
+  rastreavel: 51.01, // "Rastreável"
+  sem_depender: 52.11, // "Sem depender"
+  empresas: 53.35, // "Para empresas que crescem"
+  operacao: 54.26, // "e precisam que a operação"
+  metriclab_fim: 56.46, // "MetricLab."
+};
+
 const s = (sec: number) => Math.round(sec * 30);
 
+interface SceneProps {
+  frame?: number;
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 1 — SPLASH (0 → s(2.4) = 0 → 72)
+// CENA 1 — SPLASH (0 → s(2.42) = 0 → 73)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const SplashScene: React.FC = () => {
-  const frame = useCurrentFrame();
+const SplashScene: React.FC<SceneProps> = ({ frame: propFrame }) => {
+  const currentFrame = useCurrentFrame();
+  const frame = propFrame !== undefined ? propFrame : currentFrame;
   const { fps } = useVideoConfig();
 
   // frame 0→15: Ícone 96×96px, spring(mass:0.6, damping:14) scale 0.6→1.0, opacity 0→1
@@ -77,8 +113,8 @@ const SplashScene: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
-  // Transição de saída suave nos últimos frames
-  const exitOpacity = interpolate(frame, [65, 72], [1, 0], {
+  // Transição de saída suave nos últimos frames até s(2.42)=73
+  const exitOpacity = interpolate(frame, [65, 73], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -210,46 +246,45 @@ const SplashScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 2 — HOME DO APP (s(2.4) → s(9) = 72 → 270 / 198 frames)
+// CENA 2 — HOME DO APP (s(2.42) → s(9.47) = 73 → 284 / 211 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const HomeScene: React.FC = () => {
-  const frame = useCurrentFrame();
+const HomeScene: React.FC<SceneProps> = ({ frame: propFrame }) => {
+  const currentFrame = useCurrentFrame();
+  const frame = propFrame !== undefined ? propFrame : currentFrame;
   const { fps } = useVideoConfig();
 
-  // frame 0→30: iPhone entra por baixo, spring translateY 1100→0
+  // iPhone entra em frame s(2.42)=73: spring translateY 1100→0
   const enterSpring = spring({
-    frame,
+    frame: frame - 73,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
   const translateY = interpolate(enterSpring, [0, 1], [1100, 0]);
 
-  // Transição de saída nos últimos frames da cena (frames 185→198)
-  const exitX = interpolate(frame, [185, 198], [0, -400], {
+  // Transição de saída nos últimos frames da cena (frames 270→284)
+  const exitX = interpolate(frame, [270, 284], [0, -400], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // FAB frame 35→55: spring scale 0→1
+  // FAB frame 105→125: spring scale 0→1
   const fabSpring = spring({
-    frame: frame - 35,
+    frame: frame - 105,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
   const fabScale = interpolate(fabSpring, [0, 1], [0, 1]);
 
-  // HAMBURGER ABRE frame 90 (relativo): 15 frames (90→105)
-  // DRAWER frame 90→120: translateX -220→0
-  // DRAWER FECHA frame 145→165: translateX 0→-220
-  // HAMBURGER VOLTA frame 145→160
+  // Drawer abre em frame s(4.04)=121: 15 frames (121→136)
+  // Drawer fecha em frame s(6.72)=202: 15 frames (202→217)
   let hamburgerProgress = 0;
-  if (frame >= 90 && frame < 145) {
-    hamburgerProgress = interpolate(frame, [90, 105], [0, 1], {
+  if (frame >= 121 && frame < 202) {
+    hamburgerProgress = interpolate(frame, [121, 136], [0, 1], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     });
-  } else if (frame >= 145) {
-    hamburgerProgress = interpolate(frame, [145, 160], [1, 0], {
+  } else if (frame >= 202) {
+    hamburgerProgress = interpolate(frame, [202, 217], [1, 0], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     });
@@ -262,23 +297,23 @@ const HomeScene: React.FC = () => {
   const line3Rotate = hamburgerProgress * -45;
 
   const drawerSpring = spring({
-    frame: frame - 90,
+    frame: frame - 121,
     fps,
     config: { damping: 16, mass: 0.5 },
   });
 
   let drawerX = -220;
-  if (frame >= 90 && frame < 145) {
+  if (frame >= 121 && frame < 202) {
     drawerX = interpolate(drawerSpring, [0, 1], [-220, 0]);
-  } else if (frame >= 145) {
-    drawerX = interpolate(frame, [145, 165], [0, -220], {
+  } else if (frame >= 202) {
+    drawerX = interpolate(frame, [202, 222], [0, -220], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     });
   }
 
-  // CLIQUE "NOVO COLABORADOR" frame 175: btn scale 1.0→0.95 (5f) → 1.0 (5f)
-  const btnScale = interpolate(frame, [175, 180, 185], [1.0, 0.95, 1.0], {
+  // Clique botão em frame s(7.5)=225: btn scale 1.0→0.95 (5f) → 1.0 (5f)
+  const btnScale = interpolate(frame, [225, 230, 235], [1.0, 0.95, 1.0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -664,22 +699,23 @@ const HomeScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 3 — FORMULÁRIO (s(9) → s(18) = 270 → 540 / 270 frames)
+// CENA 3 — FORMULÁRIO (s(9.47) → s(18.0) = 284 → 540 / 256 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const FormScene: React.FC = () => {
-  const frame = useCurrentFrame();
+const FormScene: React.FC<SceneProps> = ({ frame: propFrame }) => {
+  const currentFrame = useCurrentFrame();
+  const frame = propFrame !== undefined ? propFrame : currentFrame;
   const { fps } = useVideoConfig();
 
-  // Transição frame 0→25 (relativo): Novo iPhone translateX 400→0 spring
+  // iPhone troca em frame s(9.47)=284: Novo iPhone translateX 400→0 spring
   const enterSpring = spring({
-    frame,
+    frame: frame - 284,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
   const enterX = interpolate(enterSpring, [0, 1], [400, 0]);
 
-  // Saída nos últimos frames
-  const exitX = interpolate(frame, [255, 270], [0, -400], {
+  // Saída nos últimos frames (transição para WhatsApp em 540)
+  const exitX = interpolate(frame, [530, 540], [0, -400], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -692,7 +728,7 @@ const FormScene: React.FC = () => {
     }
     const end = start + duration;
     if (frame >= end) {
-      return { text, active: false, cursor: false };
+      return { text, active: true, cursor: false };
     }
     const progress = (frame - start) / duration;
     const chars = Math.floor(progress * text.length);
@@ -700,46 +736,48 @@ const FormScene: React.FC = () => {
     return { text: text.slice(0, chars), active: true, cursor };
   };
 
-  // CAMPO 1: frame 103 (700ms = 21f)
-  const c1 = getTyped('João Silva', 103, 21);
+  // Campo 1 digita de s(12.43)=373 → s(13.5)=405 (duration 32f)
+  const c1 = getTyped('João Silva', 373, 32);
 
-  // CAMPO 2: frame 120 (650ms = 20f)
-  const c2 = getTyped('+55 (11) 98765-4321', 120, 20);
+  // Campo 2 digita de s(13.6)=408 → s(14.4)=432 (duration 24f)
+  const c2 = getTyped('+55 (11) 98765-4321', 408, 24);
 
-  // CAMPO 3: frame 140 (550ms = 16f)
-  const c3 = getTyped('+55 (11) 91234-5678', 140, 16);
+  // Campo 3 digita de s(14.5)=435 → s(15.2)=456 (duration 21f)
+  const c3 = getTyped('+55 (11) 91234-5678', 435, 21);
 
-  // CAMPO 4: frame 155 (550ms = 16f)
-  const c4 = getTyped('Analista de Planejamento', 155, 16);
+  // Campo 4 digita de s(15.3)=459 → s(16.5)=495 (duration 36f)
+  const c4 = getTyped('Analista de Planejamento', 459, 36);
 
-  // BOTÃO "Iniciar Processo"
-  // frame 0→160: opacity 0.35
-  // frame 160→175: opacity 0.35→1.0
-  // frame 230: scale 1→0.97 (5f) → 1.0 (5f), bg #111→#333→#111
-  const btnOpacity = interpolate(frame, [160, 175], [0.35, 1.0], {
+  // Botão ativa frame s(16.8)=504
+  const isBtnActive = frame >= 504;
+  const btnOpacity = interpolate(frame, [495, 504], [0.35, 1.0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const btnScale = interpolate(frame, [230, 235, 240], [1.0, 0.97, 1.0], {
+
+  // Botão press frame s(17.2)=516
+  const btnScale = interpolate(frame, [516, 521, 526], [1.0, 0.97, 1.0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const btnBg =
-    frame >= 230 && frame <= 240
-      ? interpolate(frame, [230, 235, 240], [0, 1, 0]) > 0.5
+    frame >= 516 && frame <= 526
+      ? interpolate(frame, [516, 521, 526], [0, 1, 0]) > 0.5
         ? '#333333'
         : '#111111'
+      : isBtnActive
+      ? '#F5A623'
       : '#111111';
 
-  // OVERLAY WA frame 240→260: AbsoluteFill rgba(240,240,240,0→0.95)
-  const overlayOpacity = interpolate(frame, [240, 260], [0, 0.95], {
+  // WA overlay frame s(17.5)=525 → s(18.0)=540
+  const overlayOpacity = interpolate(frame, [525, 540], [0, 0.95], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // Círculo #25D366 80px: spring scale 0.15→1.0 frame 245→265
+  // Círculo #25D366 80px: spring scale frame 525→540
   const waSpring = spring({
-    frame: frame - 245,
+    frame: frame - 525,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
@@ -1072,7 +1110,7 @@ const FormScene: React.FC = () => {
               </div>
 
               {/* OVERLAY WA */}
-              {frame >= 240 && (
+              {frame >= 525 && (
                 <div
                   style={{
                     position: 'absolute',
@@ -1117,7 +1155,7 @@ const FormScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 4 — WHATSAPP JOTA (s(18) → s(38) = 540 → 1140 / 600 frames)
+// CENA 4 — WHATSAPP JOTA (s(18.0) → s(38.28) = 540 → 1148 / 608 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 interface WAMsg {
   id: number;
@@ -1130,144 +1168,145 @@ interface WAMsg {
 const WA_MESSAGES: WAMsg[] = [
   {
     id: 1,
-    frame: 5,
+    frame: 545, // s(18.17)=545
     from: 'jota',
     text: 'Olá! Sou o Jota, assistente de operações do Consórcio Lote 15. Fui encarregado de conduzir seu processo de contratação.',
     time: '09:43',
   },
   {
     id: 2,
-    frame: 62,
+    frame: 602, // s(20.05)=602
     from: 'jota',
     text: 'Confirma que este número pertence a João Silva?',
     time: '09:43',
   },
   {
     id: 3,
-    frame: 100,
+    frame: 645, // s(21.5)=645
     from: 'joao',
     text: 'Sim, sou eu.',
     time: '09:44',
   },
   {
     id: 4,
-    frame: 146,
+    frame: 686, // s(22.86)=686
     from: 'jota',
     text: 'Perfeito, João! Bem-vindo ao processo.',
     time: '09:44',
   },
   {
     id: 5,
-    frame: 198,
+    frame: 738, // s(24.60)=738
     from: 'jota',
     text: 'Preciso de 2 documentos: RG e CPF. Pode enviar as fotos aqui?',
     time: '09:45',
   },
   {
     id: 6,
-    frame: 230,
+    frame: 765, // s(25.5)=765
     from: 'joao',
     text: 'Claro!',
     time: '09:45',
   },
   {
     id: 7,
-    frame: 255,
+    frame: 780, // s(26.0)=780
     from: 'joao',
     text: '📄 RG_frente.jpg',
     time: '09:46',
   },
   {
     id: 8,
-    frame: 272,
+    frame: 789, // s(26.3)=789
     from: 'joao',
     text: '📄 RG_verso.jpg',
     time: '09:46',
   },
   {
     id: 9,
-    frame: 289,
+    frame: 798, // s(26.6)=798
     from: 'joao',
     text: '📄 CPF.jpg',
     time: '09:46',
   },
   {
     id: 10,
-    frame: 357,
+    frame: 820, // s(27.34)=820
     from: 'jota',
     text: 'Recebi os 3 documentos. Validando...',
     time: '09:47',
   },
   {
     id: 11,
-    frame: 390,
+    frame: 855, // s(28.5)=855
     from: 'jota',
     text: 'Documentos validados. ✅',
     time: '09:47',
   },
   {
     id: 12,
-    frame: 425,
+    frame: 897, // s(29.91)=897
     from: 'jota',
     text: 'O candidato não precisa ir a lugar nenhum.',
     time: '09:48',
   },
   {
     id: 13,
-    frame: 460,
+    frame: 965, // s(32.18)=965
     from: 'jota',
     text: 'O gestor não precisa ligar para ninguém.',
     time: '09:48',
   },
   {
     id: 14,
-    frame: 499,
+    frame: 1039, // s(34.64)=1039
     from: 'jota',
     text: 'Quando tudo está validado...',
     time: '09:49',
   },
   {
     id: 15,
-    frame: 570,
+    frame: 1079, // s(35.98)=1079
     from: 'jota',
     text: 'Jota sinalizou o RH. ✓\nExame médico agendado pela MetricLab.',
     time: '09:49',
   },
 ];
 
-const WhatsAppScene: React.FC = () => {
-  const frame = useCurrentFrame();
+const WhatsAppScene: React.FC<SceneProps> = ({ frame: propFrame }) => {
+  const currentFrame = useCurrentFrame();
+  const frame = propFrame !== undefined ? propFrame : currentFrame;
   const { fps } = useVideoConfig();
 
-  // Transição frame 0→25: Novo iPhone translateX 400→0 spring
+  // iPhone troca frame s(18.0)=540: Novo iPhone translateX 400→0 spring
   const phoneSpring = spring({
-    frame,
+    frame: frame - 540,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
   const enterX = interpolate(phoneSpring, [0, 1], [400, 0]);
 
-  // Saída no final da cena
-  const exitX = interpolate(frame, [590, 600], [0, -400], {
+  // Saída no final da cena (transição para Gestor em 1148)
+  const exitX = interpolate(frame, [1135, 1148], [0, -400], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const finalX = enterX + exitX;
 
   // Typing indicators:
-  // 1. frame 160→198
-  // 2. frame 300→357
-  // 3. frame 539→570
+  // TYPING frame s(23.5)=705 → 738 (MSG 5)
+  // TYPING frame s(27.0)=810 → 820 (MSG 10)
+  // TYPING frame s(34.0)=1020 → 1039 (MSG 14)
   const isTyping =
-    (frame >= 160 && frame < 198) ||
-    (frame >= 300 && frame < 357) ||
-    (frame >= 539 && frame < 570);
+    (frame >= 705 && frame < 738) ||
+    (frame >= 810 && frame < 820) ||
+    (frame >= 1020 && frame < 1039);
 
   // Auto-scroll suave calculado para manter as mensagens recentes visíveis
   const scrollY = interpolate(
     frame,
-    [220, 260, 290, 360, 420, 460, 500, 570],
-    [0, -70, -160, -250, -360, -440, -530, -640],
+    [760, 785, 810, 840, 880, 950, 1020, 1079],
+    [0, -70, -150, -240, -340, -430, -520, -620],
     {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
@@ -1535,48 +1574,67 @@ const WhatsAppScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 5 — GESTOR RECEBE (s(38) → s(47.92) = 1140 → 1438 / 298 frames)
+// CENA 5 — GESTOR RECEBE (s(38.28) → s(47.92) = 1148 → 1438 / 290 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const GestorScene: React.FC = () => {
-  const frame = useCurrentFrame();
+const GestorScene: React.FC<SceneProps> = ({ frame: propFrame }) => {
+  const currentFrame = useCurrentFrame();
+  const frame = propFrame !== undefined ? propFrame : currentFrame;
   const { fps } = useVideoConfig();
 
-  // Transição frame 0→25: Novo iPhone translateX 400→0 spring
+  // iPhone troca frame s(38.28)=1148: Novo iPhone translateX 400→0 spring
   const phoneSpring = spring({
-    frame,
+    frame: frame - 1148,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
   const enterX = interpolate(phoneSpring, [0, 1], [400, 0]);
 
-  // Saída nos últimos frames
-  const exitY = interpolate(frame, [278, 298], [0, -900], {
+  // iPhone sai frame s(44.77)=1343: translateY 0→-1100 + opacity 1→0
+  const exitY = interpolate(frame, [1343, 1373], [0, -1100], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const exitOpacity = interpolate(frame, [278, 298], [1, 0], {
+  const exitOpacity = interpolate(frame, [1343, 1373], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 8→30: NOTIFICAÇÃO aparece, translateY -12→0 + opacity 0→1 spring
+  // Notificação aparece frame s(38.28)=1148: translateY -12→0 + opacity 0→1 spring
   const notifSpring = spring({
-    frame: frame - 8,
+    frame: frame - 1148,
     fps,
     config: { damping: 14, mass: 0.6 },
   });
   const notifY = interpolate(notifSpring, [0, 1], [-12, 0]);
-  const notifOpacity = interpolate(frame, [8, 20], [0, 1], {
+  const notifOpacity = interpolate(frame, [1148, 1160], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 59→85: SUMMARY CARD aparece, translateY 8→0 + opacity 0→1 ease
-  const cardY = interpolate(frame, [59, 85], [8, 0], {
+  // Summary card frame s(39.96)=1199: translateY 8→0 + opacity 0→1 ease
+  const cardY = interpolate(frame, [1199, 1220], [8, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const cardOpacity = interpolate(frame, [59, 85], [0, 1], {
+  const cardOpacity = interpolate(frame, [1199, 1220], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // Linha "Documentos validados" frame s(42.32)=1270
+  const docOpacity = interpolate(frame, [1270, 1285], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // Linha "Exame agendado" frame s(42.32)=1270
+  const exameOpacity = interpolate(frame, [1270, 1285], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // Linha "Próximo: Aguardando RH" frame 1270
+  const proxOpacity = interpolate(frame, [1270, 1285], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -1709,8 +1767,8 @@ const GestorScene: React.FC = () => {
                 gap: '12px',
               }}
             >
-              {/* NOTIFICAÇÃO (frame 8→30) */}
-              {frame >= 8 && (
+              {/* NOTIFICAÇÃO (frame s(38.28)=1148) */}
+              {frame >= 1148 && (
                 <div
                   style={{
                     backgroundColor: '#FFFFFF',
@@ -1748,8 +1806,8 @@ const GestorScene: React.FC = () => {
                 </div>
               )}
 
-              {/* SUMMARY CARD (frame 59→85) */}
-              {frame >= 59 && (
+              {/* SUMMARY CARD (frame s(39.96)=1199) */}
+              {frame >= 1199 && (
                 <div
                   style={{
                     backgroundColor: '#FFFFFF',
@@ -1832,7 +1890,7 @@ const GestorScene: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Linha 4 */}
+                  {/* Linha 4 (frame s(42.32)=1270) */}
                   <div
                     style={{
                       padding: '8px 12px',
@@ -1840,6 +1898,7 @@ const GestorScene: React.FC = () => {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       borderBottom: '1px solid #E5E5E3',
+                      opacity: docOpacity,
                     }}
                   >
                     <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
@@ -1859,7 +1918,7 @@ const GestorScene: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Linha 5 */}
+                  {/* Linha 5 (frame s(42.32)=1270) */}
                   <div
                     style={{
                       padding: '8px 12px',
@@ -1867,6 +1926,7 @@ const GestorScene: React.FC = () => {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       borderBottom: '1px solid #E5E5E3',
+                      opacity: exameOpacity,
                     }}
                   >
                     <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
@@ -1893,6 +1953,7 @@ const GestorScene: React.FC = () => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
+                      opacity: proxOpacity,
                     }}
                   >
                     <span style={{ fontSize: '9px', color: '#9B9B9B' }}>
@@ -1919,59 +1980,66 @@ const GestorScene: React.FC = () => {
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// CENA 6 — ENCERRAMENTO (s(47.92) → 1778 / 340 frames)
+// CENA 6 — ENCERRAMENTO (s(47.92) → 1778 = 1438 → 1778 / 340 frames)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const EndScene: React.FC = () => {
-  const frame = useCurrentFrame();
+const EndScene: React.FC<SceneProps> = ({ frame: propFrame }) => {
+  const currentFrame = useCurrentFrame();
+  const frame = propFrame !== undefined ? propFrame : currentFrame;
 
-  // frame 0→20: "M." Inter 64px weight 900, "M" #111111 "." #F5A623, letter-spacing -2px, opacity 0→1 + translateY 8→0
-  const mOpacity = interpolate(frame, [0, 20], [0, 1], {
+  // frame s(47.92)=1438: "M." Inter 64px weight 900, "M" #111111 "." #F5A623, letter-spacing -2px, opacity 0→1 + translateY 8→0
+  const mOpacity = interpolate(frame, [1438, 1455], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const mY = interpolate(frame, [0, 20], [8, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
-
-  // frame 8→25: "Fluxo de Contratação" Inter 28px weight 700 #111111, opacity 0→1
-  const subOpacity = interpolate(frame, [8, 25], [0, 1], {
+  const mY = interpolate(frame, [1438, 1455], [8, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 30: Hairline 60px × 1px bg #E5E5E3 center, opacity 0→1
-  const hairOpacity = interpolate(frame, [25, 35], [0, 1], {
+  // frame s(47.92)=1440: "Fluxo de Contratação" Inter 28px weight 700 #111111, opacity 0→1
+  const subOpacity = interpolate(frame, [1440, 1458], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 55→70: "Processo completo." Inter 16px weight 500 #111111, opacity 0→1
-  const f1Opacity = interpolate(frame, [55, 70], [0, 1], {
+  // frame s(49.0)=1470: Hairline 60px × 1px bg #E5E5E3 center, opacity 0→1
+  const hairOpacity = interpolate(frame, [1470, 1485], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 93→108: "Rastreável." Inter 16px weight 500 #111111, opacity 0→1
-  const f2Opacity = interpolate(frame, [93, 108], [0, 1], {
+  // frame s(49.75)=1493: "Processo completo." Inter 16px weight 500 #111111, opacity 0→1
+  const f1Opacity = interpolate(frame, [1493, 1508], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 126→141: "Sem depender de ninguém específico." Inter 14px weight 400 #6B6B6B, opacity 0→1
-  const f3Opacity = interpolate(frame, [126, 141], [0, 1], {
+  // frame s(51.01)=1530: "Rastreável." Inter 16px weight 500 #111111, opacity 0→1
+  const f2Opacity = interpolate(frame, [1530, 1545], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 163→200: "Para empresas que crescem e precisam que a operação acompanhe." Inter 14px weight 400 #6B6B6B, text-align center, opacity 0→1
-  const f4Opacity = interpolate(frame, [163, 195], [0, 1], {
+  // frame s(52.11)=1563: "Sem depender de ninguém específico." Inter 14px weight 400 #6B6B6B, opacity 0→1
+  const f3Opacity = interpolate(frame, [1563, 1578], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  // frame 256→290: "MetricLab." Inter 22px weight 700 #F5A623, opacity 0→1
-  const f5Opacity = interpolate(frame, [256, 285], [0, 1], {
+  // frame s(53.35)=1601: "Para empresas que crescem..." opacity 0→1
+  const f4aOpacity = interpolate(frame, [1601, 1616], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // frame s(54.26)=1628: "...e precisam que a operação acompanhe." opacity 0→1
+  const f4bOpacity = interpolate(frame, [1628, 1643], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  // frame s(56.46)=1694: "MetricLab." Inter 22px weight 700 #F5A623, opacity 0→1
+  const f5Opacity = interpolate(frame, [1694, 1714], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
@@ -2086,13 +2154,16 @@ const EndScene: React.FC = () => {
               color: '#6B6B6B',
               textAlign: 'center',
               lineHeight: 1.5,
-              opacity: f4Opacity,
               maxWidth: '320px',
               marginTop: '4px',
             }}
           >
-            Para empresas que crescem
-            <br />e precisam que a operação acompanhe.
+            <span style={{ opacity: f4aOpacity, display: 'block' }}>
+              Para empresas que crescem
+            </span>
+            <span style={{ opacity: f4bOpacity, display: 'block' }}>
+              e precisam que a operação acompanhe.
+            </span>
           </div>
 
           <div
@@ -2116,6 +2187,8 @@ const EndScene: React.FC = () => {
 // COMPOSIÇÃO PRINCIPAL: VideoAdmissao (1778 frames / 59.26s)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 export const VideoAdmissao: React.FC = () => {
+  const frame = useCurrentFrame();
+
   return (
     <AbsoluteFill style={{ backgroundColor: T.canvas }}>
       {/* Áudio Oficial de Admissão */}
@@ -2125,34 +2198,49 @@ export const VideoAdmissao: React.FC = () => {
         volume={1}
       />
 
-      {/* CENA 1 — SPLASH: 0 → s(2.4) = 0 → 72 */}
-      <Sequence from={0} durationInFrames={s(2.4)}>
-        <SplashScene />
+      {/* CENA 1 — SPLASH: 0 → s(2.42) = 0 → 73 */}
+      <Sequence from={0} durationInFrames={s(SYNC.vaga)}>
+        <SplashScene frame={frame} />
       </Sequence>
 
-      {/* CENA 2 — HOME DO APP: s(2.4) → s(9) = 72 → 270 (198 frames) */}
-      <Sequence from={s(2.4)} durationInFrames={s(6.6)}>
-        <HomeScene />
+      {/* CENA 2 — HOME DO APP: s(2.42) → s(9.47) = 73 → 284 (211 frames) */}
+      <Sequence
+        from={s(SYNC.vaga)}
+        durationInFrames={s(SYNC.ml_assume) - s(SYNC.vaga)}
+      >
+        <HomeScene frame={frame} />
       </Sequence>
 
-      {/* CENA 3 — FORMULÁRIO: s(9) → s(18) = 270 → 540 (270 frames) */}
-      <Sequence from={s(9)} durationInFrames={s(9)}>
-        <FormScene />
+      {/* CENA 3 — FORMULÁRIO: s(9.47) → s(18.0) = 284 → 540 (256 frames) */}
+      <Sequence
+        from={s(SYNC.ml_assume)}
+        durationInFrames={540 - s(SYNC.ml_assume)}
+      >
+        <FormScene frame={frame} />
       </Sequence>
 
-      {/* CENA 4 — WHATSAPP JOTA: s(18) → s(38) = 540 → 1140 (600 frames) */}
-      <Sequence from={s(18)} durationInFrames={s(20)}>
-        <WhatsAppScene />
+      {/* CENA 4 — WHATSAPP JOTA: s(18.0) → s(38.28) = 540 → 1148 (608 frames) */}
+      <Sequence
+        from={540}
+        durationInFrames={s(SYNC.gestor_resumo) - 540}
+      >
+        <WhatsAppScene frame={frame} />
       </Sequence>
 
-      {/* CENA 5 — GESTOR RECEBE: s(38) → s(47.92) = 1140 → 1438 (298 frames) */}
-      <Sequence from={s(38)} durationInFrames={s(9.92)}>
-        <GestorScene />
+      {/* CENA 5 — GESTOR RECEBE: s(38.28) → s(47.92) = 1148 → 1438 (290 frames) */}
+      <Sequence
+        from={s(SYNC.gestor_resumo)}
+        durationInFrames={s(SYNC.trabalho_ml) - s(SYNC.gestor_resumo)}
+      >
+        <GestorScene frame={frame} />
       </Sequence>
 
-      {/* CENA 6 — ENCERRAMENTO: s(47.92) → 1778 (340 frames) */}
-      <Sequence from={s(47.92)} durationInFrames={s(11.34)}>
-        <EndScene />
+      {/* CENA 6 — ENCERRAMENTO: s(47.92) → 1778 = 1438 → 1778 (340 frames) */}
+      <Sequence
+        from={s(SYNC.trabalho_ml)}
+        durationInFrames={1778 - s(SYNC.trabalho_ml)}
+      >
+        <EndScene frame={frame} />
       </Sequence>
     </AbsoluteFill>
   );
